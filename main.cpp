@@ -1,21 +1,23 @@
 /*
 Виконав студент групи ШІ-12
 Нечай Артем
-Автоматичне знаходження істинних значень будь-якого
-стандартного складного висловлювання
+Автоматичне обчислення логічних операцій над множининами
+для довільного вводу
 
 
 
 ----Algorithm plan----
 
-1. Input equation
-2. Declration variables/arrays
+1. Input sets and equation
+    1.1. Input sets name and values
+    1.2. Input equation
+    1.3. Fill universum array with all unique elements from variables arrays
+    1.4. Fill variables_boolean array with true/false values for each variable of universum
+    1.5. Output variables, their values, and their power
+2. Declaration variables/arrays
 3. Main cycle: Getting columns
-    3.1. Add variable
-    3.2. Add column
-4. Sort columns
-5. Add mini names
-6. Output table
+    3.1. Add column
+4. Calculating values of columns and outputting them
 
 ----   End plan   ----
 */
@@ -29,7 +31,7 @@ using namespace std;
 
 int main()
 {
-    // 1. Input equation
+    // 1. Input sets and equation
     const int variables_max_count = 8;
     const int variables_elements_max_count = 64;
     string variables_name[variables_max_count];
@@ -40,8 +42,10 @@ int main()
     int i = 0;
     string variable_name;
 
+
+    // 1.1. Input sets name and values
     while (variables_count < variables_max_count) {
-        cout << "Enter your set name(Enter U to make universum), press Enter if want to input equation" << endl;
+        std::cout << "Enter your set name(Enter U to make universum), press Enter if want to input equation" << endl;
         getline(cin, variable_name);
         if (variable_name == "") {
             break;
@@ -66,9 +70,6 @@ int main()
         else {
             variables_count++;
         }
-        //for (i = 0; i < variables_size[variable_count]; i++) {
-        //    cout << variables[variable_count][i] << " ";
-        //}
     }
 
     int universum[variables_elements_max_count];
@@ -77,6 +78,8 @@ int main()
     string equation;
 
     if (variables_count == 0) {
+        // Standard equation
+
         variables_name[0] = "A";
         variables_size[0] = 3;
 		variables[0][0] = 1;
@@ -94,6 +97,8 @@ int main()
 		equation = "((A or (A and B)) equal (A and (A or B))) and ((A or (A and B)) equal A)";
     }
     else {
+        // 1.2. Input equation
+
         std::cout << "Rules:  no symbols:   ^   !^   !    =>    <=>   A " << endl;
         std::cout << "Rules: use English:  and  or  not  then  equal xor" << endl;
         std::cout << "Rules: use 1 space between variables/symbols, example: (A and B) then (not C)" << endl;
@@ -105,12 +110,14 @@ int main()
 		}
     }
 
-
+    // 1.3. Fill universum array with all unique elements from variables arrays
+    // sort numbers by dividing range in 2
     for (enum_variable = 0; enum_variable != variables_count; enum_variable++) {
         for (i = 0; i != variables_size[enum_variable]; i++) {
             element_number = variables[enum_variable][i];
             is_new_element = true;
             element_position = 0;
+
             if (universum_size != 0) {
                 diap1 = 0;
                 diap2 = universum_size - 1;
@@ -133,7 +140,10 @@ int main()
                     element_position = diap1 + 1;
                 }
             }
+
             if (is_new_element) {
+                // Adding new element to universum array in sorted position
+
                 if (universum_size != 0) {
                     for (i1 = universum_size; i1 != element_position; i1 -= 1) {
                         universum[i1] = universum[i1 - 1];
@@ -144,6 +154,8 @@ int main()
             }
         }
     }
+
+    // 1.4. Fill variables_boolean array with true/false values for each variable of universum
     for (enum_variable = 0; enum_variable != variables_count; enum_variable++) {
         for (i = 0; i != universum_size; i++) {
             variables_boolean[enum_variable][i] = false;
@@ -160,6 +172,7 @@ int main()
         }
     }
 
+    // 1.5. Output variables, their values, and their power
 	for (enum_variable = 0; enum_variable != variables_count; enum_variable++) {
 		cout << variables_name[enum_variable] << " = {";
 		for (i = 0; i != variables_size[enum_variable]; i++) {
@@ -174,7 +187,7 @@ int main()
     equation.insert(0, 1, '(');
     equation.insert(length - 1, 1, ')');
 
-    // 2. Declration variables / arrays
+    // 2. Declaration variables / arrays
 
 
     const int columns_max_count = variables_max_count * 4;
@@ -186,7 +199,7 @@ int main()
     }
 
     string operations[] = { "not", "and", "or", "then", "equal", "xor"};
-    int operations_count = sizeof(operations) / 40;
+    int operations_count = 6;
 
 
     bool current_operation_not_found, is_variable_new, 
@@ -226,7 +239,7 @@ int main()
         if (element == ')') {
 
 
-            // 3.2. Add column
+            // 3.1. Add column
 
             brackets_add = ")";
             i_back = i - 1;
@@ -272,7 +285,7 @@ int main()
                             variable.pop_back();
                             // Economing time
                         }
-                        else {
+                        else {   
                             // For situations like that: (A then (B or C))
                             // 'then' will be lost because lastOperation is 'or'
                             current_operation_not_found = true;
@@ -290,7 +303,6 @@ int main()
                                         }
                                     }
                                     if (previous_equal) {
-
                                         current_operation_not_found = false;
                                         if (current_operation_i + 1 == operation_name_length && equation[i_back-1] == ' ') {
                                             current_operation_i = 0;
@@ -363,7 +375,7 @@ int main()
     }
 
 
-    // 6. Output table
+    // 4. Calculating values of columns and outputting them
     bool values[columns_max_count][variables_elements_max_count];
     int x, i_search;
     bool value = true; 
@@ -430,19 +442,19 @@ int main()
             }
 
             values[x][i] = value;
-            if (value) { std::cout << "1"; } else { std::cout << "0"; }
+            std::cout << value;
         }
     }
-    cout << endl;
-    cout << columns[columns_count-1][0] << " = {";
+    std::cout << endl;
+    std::cout << columns[columns_count-1][0] << " = {";
     for (i = 0; i != universum_size; i++) {
         if (values[columns_count - 1][i]) {
-            if (i != 0) { cout << ", "; }
-            cout << universum[i];
+            if (i != 0) { std::cout << ", "; }
+            std::cout << universum[i];
         }
     }
-    cout << "}" << endl;
-    cout << endl << endl;
+    std::cout << "}" << endl;
+    std::cout << endl << endl;
 
     /**/
     return 0;
