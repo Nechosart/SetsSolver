@@ -50,7 +50,7 @@ int main()
         if (variable_name == "") {
             break;
         }
-		variables_name[variables_count] = variable_name;
+        variables_name[variables_count] = variable_name;
 
         cout << "Enter your set values, if want to stop then enter any letter" << endl;
         i = 0;
@@ -64,8 +64,8 @@ int main()
             }
             i++;
         }
-		if (variables_size[variables_count] == 0) {
-			cout << "Error: no values in set, the set won't be added" << endl;
+        if (variables_size[variables_count] == 0) {
+            cout << "Error: no values in set, the set won't be added" << endl;
         }
         else {
             variables_count++;
@@ -82,7 +82,7 @@ int main()
 
         variables_name[0] = "A";
         variables_size[0] = 3;
-		variables[0][0] = 1;
+        variables[0][0] = 1;
         variables[0][1] = 2;
         variables[0][2] = 3;
 
@@ -94,20 +94,20 @@ int main()
         variables[1][3] = 5;
 
         variables_count = 2;
-		equation = "((A or (A and B)) equal (A and (A or B))) and ((A or (A and B)) equal A)";
+        equation = "((A or (A and B)) equal (A and (A or B))) and ((A or (A and B)) equal A)";
     }
     else {
         // 1.2. Input equation
 
-        std::cout << "Rules:  no symbols:   ^   !^   !    =>    <=>   A " << endl;
-        std::cout << "Rules: use English:  and  or  not  then  equal xor" << endl;
+        std::cout << "Rules:  no symbols:   ^   !^   !    =>    <=>   A   \\  " << endl;
+        std::cout << "Rules: use English:  and  or  not  then  equal xor minus" << endl;
         std::cout << "Rules: use 1 space between variables/symbols, example: (A and B) then (not C)" << endl;
         std::cout << "Enter your equation (if you want standard one, press Enter)" << endl << endl;
         std::getline(std::cin, equation);
-		while (equation == "") {
-			std::cout << "No equation entered" << endl;
+        while (equation == "") {
+            std::cout << "No equation entered" << endl;
             std::getline(std::cin, equation);
-		}
+        }
     }
 
     // 1.3. Fill universum array with all unique elements from variables arrays
@@ -173,15 +173,15 @@ int main()
     }
 
     // 1.5. Output variables, their values, and their power
-	for (enum_variable = 0; enum_variable != variables_count; enum_variable++) {
-		cout << variables_name[enum_variable] << " = {";
-		for (i = 0; i != variables_size[enum_variable]; i++) {
-			if (i != 0) { cout << ", "; }
-			cout << variables[enum_variable][i];
-		}
-		cout << "}" << endl;
-		cout << "|" << variables_name[enum_variable] << "| = " << pow(2, variables_size[enum_variable]) << endl;
-	}
+    for (enum_variable = 0; enum_variable != variables_count; enum_variable++) {
+        cout << variables_name[enum_variable] << " = {";
+        for (i = 0; i != variables_size[enum_variable]; i++) {
+            if (i != 0) { cout << ", "; }
+            cout << variables[enum_variable][i];
+        }
+        cout << "}" << endl;
+        cout << "|" << variables_name[enum_variable] << "| = " << pow(2, variables_size[enum_variable]) << endl;
+    }
 
     int length = equation.length() + 2;
     equation.insert(0, 1, '(');
@@ -194,17 +194,17 @@ int main()
     string columns[columns_max_count][4];
     int columns_count = variables_count;
     for (i = 0; i != variables_count; i++) {
-		columns[i][0] = variables_name[i];
-		columns[i][1] = "variable";
+        columns[i][0] = variables_name[i];
+        columns[i][1] = "variable";
     }
 
-    string operations[] = { "not", "and", "or", "then", "equal", "xor"};
-    int operations_count = 6;
+    string operations[] = { "not", "and", "or", "then", "equal", "xor", "minus" };
+    int operations_count = 7;
 
 
-    bool current_operation_not_found, is_variable_new, 
+    bool current_operation_not_found, is_variable_new,
         is_variable_before_operation, previous_equal, is_column_new;
-    int current_operation_i, operation_enum, i_back, 
+    int current_operation_i, operation_enum, i_back,
         brackets_need_to_pass, operation_name_length, i_check, enum_column;
 
     char element = ' ';
@@ -219,7 +219,8 @@ int main()
         element = equation[i];
         if (element == '(') {
             brackets_need_to_pass += 1;
-        } else if (element == ')') {
+        }
+        else if (element == ')') {
             brackets_need_to_pass -= 1;
         }
     }
@@ -285,7 +286,7 @@ int main()
                             variable.pop_back();
                             // Economing time
                         }
-                        else {   
+                        else {
                             // For situations like that: (A then (B or C))
                             // 'then' will be lost because lastOperation is 'or'
                             current_operation_not_found = true;
@@ -304,7 +305,7 @@ int main()
                                     }
                                     if (previous_equal) {
                                         current_operation_not_found = false;
-                                        if (current_operation_i + 1 == operation_name_length && equation[i_back-1] == ' ') {
+                                        if (current_operation_i + 1 == operation_name_length && equation[i_back - 1] == ' ') {
                                             current_operation_i = 0;
                                             operation = operations[operation_enum];
                                             if (operation != "not") {
@@ -337,7 +338,7 @@ int main()
             }
 
             // Adding found to columns
-			is_column_new = true;
+            is_column_new = true;
             for (enum_column = 0; enum_column != columns_count; enum_column++) {
                 if (columns[enum_column][0] == brackets_add) {
                     is_column_new = false;
@@ -378,15 +379,16 @@ int main()
     // 4. Calculating values of columns and outputting them
     bool values[columns_max_count][variables_elements_max_count];
     int x, i_search;
-    bool value = true; 
+    bool value = true;
 
     // Write variables
     for (x = 0; x != variables_count; x++) {
-		cout << columns[x][0] << "  =  ";
+        cout << columns[x][0] << "  =  ";
         for (i = 0; i != universum_size; i++) {
-			value = variables_boolean[x][i];
-			values[x][i] = value;
-            if (value) { std::cout << "1"; } else { std::cout << "0"; }
+            value = variables_boolean[x][i];
+            values[x][i] = value;
+            if (value) { std::cout << "1"; }
+            else { std::cout << "0"; }
         }
         cout << endl;
     }
@@ -422,7 +424,7 @@ int main()
                 value = !value2;
             }
             else {
-				value1 = values[column1_position][i];
+                value1 = values[column1_position][i];
 
                 if (operation == "and") {
                     value = value1 && value2;
@@ -439,6 +441,9 @@ int main()
                 else if (operation == "xor") {
                     value = (value1 || value2) != (value1 && value2);
                 }
+                else if (operation == "minus") {
+                    value = value1 && (value2 == false);
+                }
             }
 
             values[x][i] = value;
@@ -446,10 +451,12 @@ int main()
         }
     }
     std::cout << endl;
-    std::cout << columns[columns_count-1][0] << " = {";
+    std::cout << columns[columns_count - 1][0] << " = {";
+    bool first_char = true;
     for (i = 0; i != universum_size; i++) {
         if (values[columns_count - 1][i]) {
-            if (i != 0) { std::cout << ", "; }
+            if (first_char == false) { std::cout << ", "; }
+            else { first_char = false; }
             std::cout << universum[i];
         }
     }
