@@ -16,8 +16,17 @@
     1.5. Output variables, their values, and their power
 2. Declaration variables/arrays
 3. Main cycle: Getting columns
-    3.1. Add column
+	3.1. Get objects between brackets
+	3.2. Adding all variables to column list
+	3.3. Writing main data
+	3.4. Connecting all elements to caption
+	3.5. Converting all found objects to one, moving all past them to its level
+	3.6. Adding new column
 4. Calculating values of columns and outputting them
+	4.1. Write variables
+	4.2. Collecting all columns id for current column
+	4.3. Calculating value using last value and current column value
+	4.4. Outputting last column and its power
 
 ----   End plan   ----
 */
@@ -246,14 +255,13 @@ int main()
         if (element == ')') {
 
 
-            // 3.1. Add column
+			// 3.1. Get objects between brackets
 
             i_back = i - 1;
             object_found = "";
             objects_found_count = 0;
             brackets_need_to_pass = 1;
 
-            // Finding all objects
             while (i_back >= 0 && brackets_need_to_pass > 0) {
                 element = equation[i_back];
 
@@ -276,13 +284,6 @@ int main()
                 i_back -= 1;
             }
 
-            /*
-            for (i1 = objects_found_count - 1; i1 >= 0; i1-=1) {
-                std::cout << objects_found[i1] << " ";
-            }
-            std::cout << endl;
-            */
-
             for (enum_operation = 0; enum_operation != operations_count; enum_operation++) {
                 for (enum_object = objects_found_count - 1; enum_object >= 0; enum_object -= 1) {
                     if (operations[enum_operation] == objects_found[enum_object]) {
@@ -291,6 +292,7 @@ int main()
                         objects_add_count = operations_argument[enum_operation];
 
 
+                        // 3.2. Adding all variables to column list
                         if (operations_argument[enum_operation] == 1) {
                             objects_start = enum_object;
                             objects_end = enum_object - 1;
@@ -322,19 +324,18 @@ int main()
                             }
                         }
 
-                        // Writing main data
+                        // 3.3. Writing main data
                         objects_add_count += 2;
                         columns[columns_count][1] = to_string(objects_add_count);
                         columns[columns_count][2] = objects_found[enum_object];
 
-                        // Connecting all elements to caption
+                        // 3.4. Connecting all elements to caption
                         columns[columns_count][0] = objects_found[objects_start];
                         for (enum_object1 = objects_start-1; enum_object1 >= objects_end; enum_object1-=1) {
                             columns[columns_count][0] += " " + objects_found[enum_object1];
                         }
-                        //std::cout << columns[columns_count][0] << endl;
 
-                        // Converting all found objects to one, moving all past them to its level
+                        // 3.5. Converting all found objects to one, moving all past them to its level
                         objects_found[objects_end] = columns[columns_count][0];
                         jump_over = objects_start - objects_end;
                         objects_found_count -= jump_over;
@@ -343,7 +344,7 @@ int main()
                         }
                         enum_object -= enum_object - objects_end;
                         
-                        // Adding new column
+                        // 3.6. Adding new column
                         is_column_new = true;
                         for (enum_column = 0; enum_column != columns_count; enum_column++) {
                             if (columns[enum_column][0] == columns[columns_count][0]) {
@@ -386,14 +387,13 @@ int main()
     int x, i_search;
     bool value = true;
 
-    // Write variables
+    // 4.1. Write variables
     for (x = 0; x != variables_count; x++) {
         std::cout << columns[x][0] << "  =  ";
         for (i = 0; i != universum_size; i++) {
             value = variables_boolean[x][i];
             values[x][i] = value;
-            if (value) { std::cout << "1"; }
-            else { std::cout << "0"; }
+            std::cout << value;
         }
         std::cout << endl;
     }
@@ -406,6 +406,8 @@ int main()
     int columns_id[3+objects_max_count];
 
     for (x = variables_count; x != columns_count; x++) {
+
+		// 4.2. Collecting all columns id for current column
         objects_count = stoi(columns[x][1]);
         for (enum_object = 3; enum_object <= objects_count; enum_object++) {
             for (enum_column = 0; enum_column != x; enum_column++) {
@@ -421,6 +423,9 @@ int main()
         std::cout << endl << endl << columns[x][0] << "  =  ";
         for (i = 0; i != universum_size; i++) {
             value = values[columns_id[3]][i];
+
+			// 4.3. Calculating value using last value and current column value
+
             if (operation == "not") {
                 value = !value;
             }
@@ -453,6 +458,8 @@ int main()
             std::cout << value;
         }
     }
+
+	// 4.4. Outputting last column and its power
     std::cout << endl;
     std::cout << columns[columns_count - 1][0] << " = {";
     int elements_count = 0;
@@ -467,6 +474,5 @@ int main()
     std::cout << "|set| = " << pow(2, elements_count) << endl;
     std::cout << endl << endl;
 
-    /**/
     return 0;
 }
